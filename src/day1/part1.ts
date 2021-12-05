@@ -1,4 +1,4 @@
-import { readFile } from "../utils";
+import { readFile, reportAnswer } from "../utils";
 type Reading = {
   measurement: number;
 };
@@ -27,7 +27,6 @@ export const runTest = (): number => solve("data/day1/test-data.txt");
 
 export const run = (): number => {
   const answer = solve("data/day1/data.txt");
-  console.log(answer);
+  reportAnswer(1, 1, answer);
   return answer;
 };
-// run();

@@ -1,15 +1,15 @@
 # advent-of-code-2021
 
-Typescript
+Typescript solutions to Advent of Code 2021.
 
-### Progress
+## Progress
 
 - [x] day1
   - [x] part1
   - [x] part2
-- [ ] day2
-  - [ ] part1
-  - [ ] part2
+- [x] day2
+  - [x] part1
+  - [x] part2
 - [ ] day3
   - [ ] part1
   - [ ] part2

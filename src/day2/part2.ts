@@ -1,4 +1,4 @@
-import { readFile } from "../utils";
+import { readFile, reportAnswer } from "../utils";
 
 type Direction = "forward" | "down" | "up";
 type Instruction = { direction: Direction; value: number };
@@ -56,7 +56,6 @@ export const runTest = () => solve("data/day2/test-data.txt");
 
 export const run = () => {
   const answer = solve("data/day2/data.txt");
-  console.log(answer);
+  reportAnswer(2, 2, answer);
   return answer;
 };
-run();
