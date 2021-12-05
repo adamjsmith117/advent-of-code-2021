@@ -2,28 +2,31 @@ import { readFile } from "../utils";
 
 type Direction = "forward" | "down" | "up";
 type Instruction = { direction: Direction; value: number };
-type Coord = { position: number; depth: number };
+type Coord = { position: number; depth: number; aim: number };
 
-let coord: Coord = { position: 0, depth: 0 };
+let coord: Coord = { position: 0, depth: 0, aim: 0 };
 
 const processInstruction = (instruction: Instruction) => {
   switch (instruction.direction) {
     case "forward":
       coord = {
         position: coord.position + instruction.value,
-        depth: coord.depth,
+        depth: Math.max(coord.depth + instruction.value * coord.aim, 0),
+        aim: coord.aim,
       };
       break;
     case "up":
       coord = {
         position: coord.position,
-        depth: Math.max(coord.depth - instruction.value, 0),
+        depth: coord.depth,
+        aim: coord.aim - instruction.value,
       };
       break;
     case "down":
       coord = {
         position: coord.position,
-        depth: coord.depth + instruction.value,
+        depth: coord.depth,
+        aim: coord.aim + instruction.value,
       };
       break;
   }
@@ -49,11 +52,11 @@ const solve = (filepath: string): number => {
   return coord.position * coord.depth;
 };
 
-export const runTest = (): number => solve("data/day2/test-data.txt");
+export const runTest = () => solve("data/day2/test-data.txt");
 
-export const run = (): number => {
+export const run = () => {
   const answer = solve("data/day2/data.txt");
   console.log(answer);
   return answer;
 };
-// run();
+run();
