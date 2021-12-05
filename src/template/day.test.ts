@@ -10,3 +10,7 @@
 //   expect(runTestPart2()).toBe(-1);
 //   runPart2();
 // });
+
+test("template", () => {
+  expect(true).toBe(true);
+});

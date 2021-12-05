@@ -53,6 +53,6 @@ export const runTest = (): number => solve("data/day2/test-data.txt");
 
 export const run = (): number => {
   const answer = solve("data/day2/data.txt");
-  reportAnswer(25, 1, answer);
+  reportAnswer(2, 1, answer);
   return answer;
 };

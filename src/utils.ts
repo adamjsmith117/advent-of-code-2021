@@ -19,3 +19,10 @@ export const readFile = (path: string, delimiter: string = "\n") =>
  */
 export const reportAnswer = (day: Day, part: Part, answer: number | string) =>
   console.log(`Day${day}, part${part}: ${answer}`);
+
+/**
+ * Converts binary number as string to decimal number
+ * @param bin binary number as string
+ * @returns decimal number equivalent of input binary value
+ */
+export const bin2Dec = (bin: string): number => parseInt(bin, 2);
