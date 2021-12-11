@@ -2,163 +2,138 @@ import { readFile, reportAnswer } from '../utils'
 
 const BOARD_DIMENSION = 5
 
-type BoardCollection = {
-  boards: Board[]
-  numberCage: number[]
-}
-
-type Coord = { x: number; y: number; value: number }
+type BoardNumber = { marked: boolean; value: number }
 
 type Board = {
-  id: string
-  board: number[][]
-  markedCoords: Coord[]
-  won: boolean
+  id: number
+  hasBingo: boolean
+  board: BoardNumber[][]
+  score?: number
 }
 
-const runGame = (collection: BoardCollection): number => {
-  let round = 0
-  let mostRecentWinningBoard = {} as Board
-  let mostRecentlyPulledNumber
-  while (!collection.boards.every((board: Board) => board.won)) {
-    mostRecentlyPulledNumber = processRound(collection, round)
-    collection.boards.forEach((board: Board) => {
-      if (!board.won && isWinner(board)) {
-        mostRecentWinningBoard = board
-        board.won = true
-      }
-    })
+type BingoGame = {
+  boards: Board[]
+  drawNumbers: number[]
+}
+
+const runGame = (bingoGame: BingoGame): number => {
+  let round = -1
+  let finalScore
+  let allBoardsHaveWon = false
+  while (!allBoardsHaveWon) {
     round++
-  }
-  return calculateScore(
-    mostRecentWinningBoard,
-    mostRecentlyPulledNumber as number
-  )
-}
-
-const calculateScore = (
-  board: Board,
-  mostRecentlyPulledNumber: number
-): number => {
-  let sum = 0
-  for (let i = 0; i < BOARD_DIMENSION; i++) {
-    for (let j = 0; j < BOARD_DIMENSION; j++) {
-      if (
-        !board.markedCoords.some(
-          (coord: Coord) => coord.x === i && coord.y === j
-        )
-      ) {
-        sum += board.board[i][j]
-      }
+    finalScore = runRound(bingoGame, round)
+    bingoGame.boards = bingoGame.boards.filter(
+      (board: Board) => !board.hasBingo
+    )
+    if (bingoGame.boards.length === 0) {
+      allBoardsHaveWon = true
     }
   }
-  console.log(sum, mostRecentlyPulledNumber, sum * mostRecentlyPulledNumber)
-  return sum * mostRecentlyPulledNumber
+  return finalScore as number
 }
 
-const processRound = (collection: BoardCollection, round: number): number => {
-  const drawnNumber = collection.numberCage[round]
-  collection.boards.forEach((board: Board) => {
-    for (let i = 0; i < BOARD_DIMENSION; i++) {
-      for (let j = 0; j < BOARD_DIMENSION; j++) {
-        if (board.board[i][j] === drawnNumber) {
-          board.markedCoords.push({ x: i, y: j, value: board.board[i][j] })
-        }
-      }
+const runRound = (bingoGame: BingoGame, round: number): number | undefined => {
+  const drawnNumber = bingoGame.drawNumbers[round]
+  bingoGame.boards.forEach((board: Board) => {
+    markDrawnNumber(board, drawnNumber)
+    if (hasBingo(board)) {
+      board.hasBingo = true
+      board.score = getScore(board, drawnNumber)
     }
   })
-  return drawnNumber
+  return bingoGame.boards.find((board: Board) => board.hasBingo)?.score
 }
 
-const isWinner = (board: Board): boolean => {
-  // Horizontal
-  for (let i = 0; i < BOARD_DIMENSION; i++) {
-    if (
-      board.markedCoords
-        .map((coord: Coord) => coord.x)
-        .filter((xCoord: number) => xCoord === i).length === BOARD_DIMENSION
-    ) {
-      return true
-    }
-  }
-  // Vertical
-  for (let i = 0; i < BOARD_DIMENSION; i++) {
-    if (
-      board.markedCoords
-        .map((coord: Coord) => coord.y)
-        .filter((yCoord: number) => yCoord === i).length === BOARD_DIMENSION
-    ) {
-      return true
-    }
-  }
-  // Diagonal
-  let diagonalWin = true
-  for (let i = 0; i < BOARD_DIMENSION; i++) {
-    if (
-      !board.markedCoords.some((coord: Coord) => coord.x === i && coord.y == i)
-    ) {
-      diagonalWin = false
-    }
-  }
-  if (diagonalWin) {
-    return true
-  }
-  // Reverse Diagonal
-  let reverseDiagonalWin = true
-  for (let i = BOARD_DIMENSION; i >= 0; --i) {
-    if (
-      !board.markedCoords.some((coord: Coord) => coord.x === i && coord.y == i)
-    ) {
-      reverseDiagonalWin = false
-    }
-  }
-  if (reverseDiagonalWin) {
-    return true
-  }
-  return false
+const markDrawnNumber = (board: Board, drawnNumber: number) =>
+  board.board.forEach((row: BoardNumber[]) => {
+    row.forEach((num: BoardNumber) => {
+      if (num.value === drawnNumber) {
+        num.marked = true
+      }
+    })
+  })
+
+const hasBingo = (board: Board) =>
+  isHorizontalWin(board) || isVerticalWin(board)
+
+const getScore = (board: Board, mostRecentlyPulledNum: number): number => {
+  let sum = 0
+  board.board.forEach((row: BoardNumber[]) => {
+    row.forEach((num: BoardNumber) => {
+      if (!num.marked) {
+        sum += num.value
+      }
+    })
+  })
+  return sum * mostRecentlyPulledNum
 }
 
-const buildBoard = (lines: string[]): Board => {
-  const board = [] as number[][]
+const isHorizontalWin = (board: Board): boolean => {
+  let win = false
+  board.board.forEach((row: BoardNumber[]) => {
+    if (row.every((number: BoardNumber) => number.marked)) {
+      win = true
+    }
+  })
+  return win
+}
+
+const isVerticalWin = (board: Board): boolean => {
+  let win = false
+  for (let i = 0; i < BOARD_DIMENSION; i++) {
+    let column = board.board.map((row: BoardNumber[]) => row[i])
+    if (column.every((number: BoardNumber) => number.marked)) {
+      win = true
+    }
+  }
+  return win
+}
+
+const buildBoard = (lines: string[], boardId: number): Board => {
+  const board = [] as BoardNumber[][]
   for (let i = 0; i < BOARD_DIMENSION; i++) {
     const currentRow = lines[i].trim().replace(/  /g, ' ').split(' ')
     for (let j = 0; j < BOARD_DIMENSION; j++) {
       if (!board[i]) board[i] = []
-      board[i][j] = Number(currentRow[j])
+      board[i][j] = { value: Number(currentRow[j]), marked: false }
     }
   }
-  return { id: board[0][0].toString(), board, markedCoords: [], won: false }
+  return { id: boardId, board, hasBingo: false }
 }
 
 const buildBoards = (lines: string[]): Board[] => {
   const boards: Board[] = []
+  let boardId = 0
   for (let i = 2; i < lines.length; i++) {
     const currentBoardLines: string[] = []
     for (let j = 0; j < BOARD_DIMENSION; j++) {
       currentBoardLines.push(lines[i + j])
     }
-    boards.push(buildBoard(currentBoardLines))
+    boards.push(buildBoard(currentBoardLines, boardId))
+    boardId++
     i += BOARD_DIMENSION
   }
   return boards
 }
 
-const buildBoardCollection = (filepath: string): BoardCollection => {
+const buildBingoGame = (filepath: string): BingoGame => {
   const lines = readFile(filepath)
-  const collection: BoardCollection = {
-    numberCage: lines[0].split(',').map(Number),
+  return {
+    drawNumbers: lines[0].split(',').map(Number),
     boards: buildBoards(lines),
   }
-  return collection
 }
 
-const solve = (filepath: string): number =>
-  runGame(buildBoardCollection(filepath))
+const solve = (filepath: string): number => {
+  const bg = buildBingoGame(filepath)
+  return runGame(bg)
+}
 
 export const runTest = (): number => solve('data/day4/test-data.txt')
 
 export const run = (): number => {
   const answer = solve('data/day4/data.txt')
-  reportAnswer(4, 1, answer)
+  reportAnswer(4, 2, answer)
   return answer
 }

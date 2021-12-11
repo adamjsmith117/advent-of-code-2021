@@ -13,9 +13,9 @@ Typescript solutions to Advent of Code 2021.
 - [x] day3
   - [x] part1
   - [x] part2
-- [ ] day4
-  - [ ] part1
-  - [ ] part2
+- [x] day4 - rewrote the entire thing just to realize I wasn't supposed to count diagonal wins
+  - [x] part1
+  - [x] part2
 - [ ] day5
   - [ ] part1
   - [ ] part2
