@@ -23,6 +23,6 @@ export type Day =
   | 22
   | 23
   | 24
-  | 25;
+  | 25
 
-export type Part = 1 | 2;
+export type Part = 1 | 2

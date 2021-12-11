@@ -11,6 +11,6 @@
 //   runPart2();
 // });
 
-test("template", () => {
-  expect(true).toBe(true);
-});
+test('template', () => {
+  expect(true).toBe(true)
+})
