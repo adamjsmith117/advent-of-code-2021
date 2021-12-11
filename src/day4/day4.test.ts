@@ -8,5 +8,5 @@ test('part1 test', () => {
 
 test('part2 test', () => {
   expect(runTestPart2()).toBe(1924)
-  expect(runPart2()).not.toBe(5918)
+  expect(runPart2()).toBe(16830)
 })

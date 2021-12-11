@@ -44,11 +44,8 @@ const buildInstruction = (input: string): Instruction => {
 }
 
 const solve = (filepath: string): number => {
-  const input = readFile(filepath)
-  const instructions = input.map(buildInstruction)
-  instructions.forEach((ins: Instruction) => {
-    processInstruction(ins)
-  })
+  coord = { position: 0, depth: 0, aim: 0 }
+  readFile(filepath).map(buildInstruction).forEach(processInstruction)
   return coord.position * coord.depth
 }
 
