@@ -15,6 +15,18 @@ type LineCollection = {
   diagram: Diagram
 }
 
+const numOverlappingCoords = (lc: LineCollection) => {
+  let numOverlappingCoords = 0
+  lc.diagram.forEach((line: number[]) =>
+    line.forEach((val: number) => {
+      if (val > 1) {
+        numOverlappingCoords++
+      }
+    })
+  )
+  return numOverlappingCoords
+}
+
 const isHorizontal = (line: Line): boolean => line.start.y === line.end.y
 
 const isVertical = (line: Line): boolean => line.start.x === line.end.x
@@ -35,22 +47,25 @@ const drawLines = (lc: LineCollection): void => {
       const length = getLineLength(line)
       const startCoord = Math.min(line.start.x, line.end.x)
       for (let i = startCoord; i < startCoord + length; i++) {
-        lc.diagram[line.start.y][i]++
+        lc.diagram[i][line.start.y]++
       }
     }
     if (isVertical(line)) {
       const length = getLineLength(line)
       const startCoord = Math.min(line.start.y, line.end.y)
       for (let i = startCoord; i < startCoord + length; i++) {
-        lc.diagram[i][line.start.x]++
+        lc.diagram[line.start.x][i]++
       }
     }
   })
 }
 
+const transposeDiagram = (diagram: Diagram): Diagram =>
+  diagram[0].map((_, colIndex) => diagram.map((row) => row[colIndex]))
+
 const stringifyDiagram = (diagram: Diagram): string => {
   let retVal = ''
-  diagram.forEach((line: number[]) => {
+  transposeDiagram(diagram).forEach((line: number[]) => {
     line.forEach((val: number) => {
       retVal += val === 0 ? '.' : val.toString()
     })
@@ -105,8 +120,8 @@ const solve = (filepath: string): number => {
   const input = readFile(filepath)
   const lc = buildLineCollection(input)
   drawLines(lc)
-  writeFileSync('./output.txt', stringifyDiagram(lc.diagram))
-  return 0
+  writeFileSync('./src/day5/part1-output.txt', stringifyDiagram(lc.diagram))
+  return numOverlappingCoords(lc)
 }
 
 export const runTest = (): number => solve('data/day5/test-data.txt')

@@ -17,7 +17,7 @@ Typescript solutions to Advent of Code 2021.
   - [x] part1
   - [x] part2
 - [ ] day5
-  - [ ] part1
+  - [x] part1
   - [ ] part2
 - [ ] day6
   - [ ] part1
