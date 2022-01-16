@@ -64,7 +64,8 @@ const drawLines = (lc: LineCollection): void => {
       }
       return
     }
-    const length = getLineLength(line)
+    // else, is diagonal
+    const length = getLineLength(line) + 1
     if (line.start.x < line.end.x) {
       if (line.start.y < line.end.y) {
         // up to the right
@@ -93,6 +94,7 @@ const drawLines = (lc: LineCollection): void => {
   })
 }
 
+// For formatting printed diagram to match AOC site's format
 const transposeDiagram = (diagram: Diagram): Diagram =>
   diagram[0].map((_, colIndex) => diagram.map((row) => row[colIndex]))
 
