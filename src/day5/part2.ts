@@ -45,7 +45,6 @@ const getLineLength = (line: Line): number => {
   )
 }
 
-// TODO: Some indexing is off here, look at part2-output.txt and compare to diagram in aoc site
 const drawLines = (lc: LineCollection): void => {
   lc.lines.forEach((line: Line) => {
     if (isHorizontal(line)) {
