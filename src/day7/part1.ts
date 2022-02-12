@@ -1,7 +1,7 @@
 import { readFile, reportAnswer } from '../utils'
 
 const solve = (filepath: string): number => {
-  const input = readFile(filepath)
+  const input = readFile(filepath, ',').map(Number)
   return 0
 }
 
