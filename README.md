@@ -23,8 +23,8 @@ Typescript solutions to Advent of Code 2021.
   - [x] part1
   - [x] part2
 - [x] day7
-  - [x] part1
-  - [x] part2
+  - [x] part1 - looked up median trick for solving
+  - [x] part2 - hacky brute force solution that happened to work
 - [ ] day8
   - [ ] part1
   - [ ] part2

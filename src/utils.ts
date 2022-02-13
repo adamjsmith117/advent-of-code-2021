@@ -26,3 +26,22 @@ export const reportAnswer = (day: Day, part: Part, answer: number | string) =>
  * @returns decimal number equivalent of input binary value
  */
 export const bin2Dec = (bin: string): number => parseInt(bin, 2)
+
+/**
+ * Replaces characters starting at specified index with replacement string
+ * @param str String to have characters replaced on.
+ * @param idx Starting index to replace characters at.
+ * @param repl Replacement string/char
+ * @returns New string with characters starting at str's idx replaced with repl
+ */
+export const replaceAt = (str: string, idx: number, repl: string) =>
+  str.substr(0, idx) + repl + str.substr(idx + repl.length)
+
+/**
+ * Sum of numbers in input array
+ * @param arr Array of numbers to be summed
+ * @param init optional initial value, defaults to 0
+ * @returns sum
+ */
+export const sum = (arr: number[], init = 0) =>
+  arr.reduce((sum, cur) => sum + cur, init)
